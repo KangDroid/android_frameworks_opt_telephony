@@ -502,10 +502,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
         return messageLength;
     }
 
-    class RILReceiver implements Runnable {
+    protected class RILReceiver implements Runnable {
         byte[] buffer;
 
-        RILReceiver() {
+        protected RILReceiver() {
             buffer = new byte[RIL_MAX_COMMAND_BYTES];
         }
 
@@ -683,13 +683,17 @@ public class RIL extends BaseCommands implements CommandsInterface {
             dm.registerDisplayListener(mDisplayListener, null);
 
             riljLog("Starting RILReceiver");
-            mReceiver = new RILReceiver();
+            mReceiver = createRILReceiver();
             mReceiverThread = new Thread(mReceiver, "RILReceiver");
             mReceiverThread.start();
         }
 
         TelephonyDevController tdc = TelephonyDevController.getInstance();
         tdc.registerRIL(this);
+    }
+
+    protected RILReceiver createRILReceiver() {
+        return new RILReceiver();
     }
 
     //***** CommandsInterface implementation
